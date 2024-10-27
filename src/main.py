@@ -6,6 +6,7 @@ from email.header import decode_header
 
 import aioimaplib
 
+from src.ai.ai import extract_email_info
 from src.classes.email_class import Email
 
 from src.api import router
@@ -64,18 +65,24 @@ async def main():
     status, messages = imap.select()
 
     message_count = int(messages[0])
+    print(message_count)
 
     for i in range(message_count, 0, -1):
         res, msg = imap.fetch(str(i), "(RFC822)")
+        print(len(msg))
         for response_part in msg:
-            await router.store_backend(find_data(response_part))
+            print(response_part)
+            entry = find_data(response_part)
+            info = extract_email_info(entry)
+            # print(info)
+            # await router.store_backend(info, entry.mail_html)
 
 
     typ, data = imap.search(None, 'ALL')
     for num in data[0].split():
         imap.store(num, '+FLAGS', '\\Deleted')
-    imap.expunge()
-    imap.close()
+    # imap.expunge()
+    # imap.close()
     imap.logout()
 
 if __name__ == "__main__":
