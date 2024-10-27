@@ -1,3 +1,4 @@
+import asyncio
 import imaplib
 import email
 import os
@@ -7,7 +8,7 @@ from src.api import router
 
 USERNAME = os.getenv("EMAIL_USER")
 PASSWORD = os.getenv("EMAIL_PASSWORD")
-IMAP_SERVER = os.getenv("IMAP_SERVER")
+IMAP_SERVER = os.getenv("EMAIL_IMAP")
 
 def decode_msg(string, message):
     subject, encoding = decode_header(message[string])[0]
@@ -19,7 +20,7 @@ def decode_msg(string, message):
 def find_data(response_part):
     if isinstance(response_part, tuple):
         email_message = email.message_from_bytes(response_part[1])
-
+y
         mail_subject = decode_msg("Subject", email_message)
         mail_from = decode_msg("From", email_message)
 
@@ -52,7 +53,7 @@ def find_data(response_part):
 
         return mail_subject, mail_from, mail_text, mail_html
 
-def main():
+async def main():
     imap = imaplib.IMAP4_SSL(IMAP_SERVER)
     imap.login(USERNAME, PASSWORD)
 
@@ -68,9 +69,10 @@ def main():
             current_mails.append(find_data(response_part))
 
     for i in range(len(current_mails)):
-        router.store_backend(current_mails[i])
+        await router.store_backend(current_mails[i])
 
     imap.close()
     imap.logout()
 
-main()
+if __name__ == "__main__":
+    asyncio.run(main())
