@@ -43,15 +43,15 @@ def find_data(response_part):
                     pass
                 if content_type == "text/plain" and "attachment" not in content_disposition:
                     mail_text = body
-                if content_type == "text/html" and "attachment" not in content_disposition:
-                    mail_html = body
+                # elif content_type == "text/html" and "attachment" not in content_disposition:
+                #    mail_html = body
         else:
             content_type = email_message.get_content_type()
             body = email_message.get_payload(decode=True).decode()
             if content_type == "text/plain":
                 mail_text = body
-            if content_type == "text/html":
-                mail_html = body
+            # elif content_type == "text/html":
+            #    mail_html = body
 
         if not mail_html and mail_text:
             mail_html = f"<html><body><pre>{mail_text}</pre></body></html>"
@@ -71,11 +71,11 @@ async def main():
         res, msg = imap.fetch(str(i), "(RFC822)")
         print(len(msg))
         for response_part in msg:
-            print(response_part)
             entry = find_data(response_part)
-            info = extract_email_info(entry)
-            # print(info)
-            # await router.store_backend(info, entry.mail_html)
+            if entry is not None:
+                info = extract_email_info(entry)
+                if info is not None:
+                    await router.store_backend(info, entry.mail_html)
 
 
     typ, data = imap.search(None, 'ALL')

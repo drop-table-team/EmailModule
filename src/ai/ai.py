@@ -19,17 +19,18 @@ def getinfos(email):
 
     # Define your prompt template
     template = """
+    Du bist ein sehr hilfreicher Assistent der sich auf die Extraktion von Informationen aus allen Emails spezialisiert hat. 
     Aus dem untenstehenden E-Mail-Text, extrahiere die folgenden Informationen:
 
     Betreff
+    Schlagworte (relevante Schlüsselwörter oder Themen)
     Kurzbeschreibung (eine Zusammenfassung in einem Satz)
     Langbeschreibung (eine detaillierte Zusammenfassung)
-    Schlagworte (relevante Schlüsselwörter oder Themen)
-
+    
     E-Mail-Text: "{email_text}"
 
-    Gib das Ergebnis als JSON-Objekt mit den folgenden Schlüsseln aus: "title", "tags", "short" und"transcript".
-    Bitte halte dich bei der Ausgabe an die deutsche Sprache.
+    Gib das Ergebnis als JSON-Objekt mit den folgenden Schlüsseln aus: "title", "tags", "short", "transcript".
+    Bitte halte dich bei der Ausgabe an die deutsche Sprache. Fülle unbedingt alle Schlüssel aus! 
     """
 
     # Set up the prompt with LangChain
@@ -48,7 +49,8 @@ def extract_email_info(email):
     if email is None:
         return
     response = getinfos(email)
-    # Parse response as JSON
+    if len(response) == 0:
+        return None
     try:
         result = json.dumps(response, ensure_ascii=False)
         return result
