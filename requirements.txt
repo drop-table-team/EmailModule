@@ -1,0 +1,10 @@
+aiohappyeyeballs @ file:///croot/aiohappyeyeballs_1725434011349/work
+aiohttp @ file:///croot/aiohttp_1725527756643/work
+aiosignal @ file:///tmp/build/80754af9/aiosignal_1637843061372/work
+attrs @ file:///croot/attrs_1729089401488/work
+frozenlist @ file:///work/perseverance-python-buildout/croot/frozenlist_1698886842990/work
+idna @ file:///croot/idna_1714398848350/work
+multidict @ file:///croot/multidict_1701096859099/work
+setuptools==75.1.0
+wheel==0.44.0
+yarl @ file:///croot/yarl_1725976495189/work
