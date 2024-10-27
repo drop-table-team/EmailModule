@@ -4,8 +4,6 @@ import email
 import os
 from email.header import decode_header
 
-import aioimaplib
-
 from src.ai.ai import extract_email_info
 from src.classes.email_class import Email
 
@@ -62,27 +60,34 @@ async def main():
     imap = imaplib.IMAP4_SSL(IMAP_SERVER)
     imap.login(USERNAME, PASSWORD)
 
-    status, messages = imap.select()
 
-    message_count = int(messages[0])
-    print(message_count)
+    async def active():
+        status, messages = imap.select()
 
-    for i in range(message_count, 0, -1):
-        res, msg = imap.fetch(str(i), "(RFC822)")
-        print(len(msg))
-        for response_part in msg:
-            entry = find_data(response_part)
-            if entry is not None:
-                info = extract_email_info(entry)
-                if info is not None:
-                    await router.store_backend(info, entry.mail_html)
+        message_count = int(messages[0])
+        print(message_count)
+
+        for i in range(message_count, 0, -1):
+            res, msg = imap.fetch(str(i), "(RFC822)")
+            print(len(msg))
+            for response_part in msg:
+                entry = find_data(response_part)
+                if entry is not None:
+                    info = extract_email_info(entry)
+                    if info is not None:
+                        print(info)
+                        await router.store_backend(info, entry.mail_html)
 
 
-    typ, data = imap.search(None, 'ALL')
-    for num in data[0].split():
-        imap.store(num, '+FLAGS', '\\Deleted')
-    # imap.expunge()
-    # imap.close()
+        typ, data = imap.search(None, 'ALL')
+        for num in data[0].split():
+            imap.store(num, '+FLAGS', '\\Deleted')
+        imap.expunge()
+
+    while True:
+        await active()
+        await asyncio.sleep(60)
+
     imap.logout()
 
 if __name__ == "__main__":
