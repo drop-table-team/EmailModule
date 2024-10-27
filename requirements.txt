@@ -7,3 +7,4 @@ idna==3.10
 multidict==6.1.0
 propcache==0.2.0
 yarl==1.16.0
+aioimaplib~=1.1.0

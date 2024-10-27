@@ -1,4 +1,7 @@
 class Email:
+    def __new__(cls, *args, **kwargs):
+        return super().__new__(cls)
+
     def __init__(self, mail_subject, mail_from, mail_text, mail_html):
         self.mail_subject = mail_subject
         self.mail_from = mail_from
